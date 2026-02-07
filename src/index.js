@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 
+import { connectDB } from "./config/db.js";
+
 const app = express();
 
 //Security Middleware
@@ -15,6 +17,8 @@ app.get("/api/health", (req, res) => {
 });
 
 const PORT = process.env.PORT || 8000;
+
+connectDB().then(() => console.log("Connected to MongoDB"));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
