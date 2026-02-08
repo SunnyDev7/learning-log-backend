@@ -20,6 +20,6 @@ app.use("/api/health", healthCheckRoutes);
 app.use("/api/auth", authenticationRoutes);
 
 //Category
-app.use("/api/category", categoryRoutes);
+app.use("/api/categories", categoryRoutes);
 
 export default app;
