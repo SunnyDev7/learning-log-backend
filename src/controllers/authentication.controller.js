@@ -89,3 +89,21 @@ export const logIn = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getLoggedInUser = async (req, res, next) => {
+  try {
+    //TODO: extar db query
+    const user = await User.findById(req.user.id);
+
+    res.json({
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
