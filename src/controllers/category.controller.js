@@ -120,3 +120,30 @@ export const deleteCategory = async (req, res, next) => {
     next(error);
   }
 };
+
+export const reorderCategories = async (req, res, next) => {
+  try {
+    const { categoryIds } = req.body;
+
+    // Update order for each category
+    const updates = categoryIds.map((id, index) => ({
+      updateOne: {
+        filter: { _id: id, userId: req.user.id },
+        update: { order: index },
+      },
+    }));
+
+    await Category.bulkWrite(updates);
+
+    const categories = await Category.find({ userId: req.user.id }).sort(
+      "order",
+    );
+
+    res.json({
+      success: true,
+      data: categories,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
