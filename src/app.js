@@ -3,6 +3,7 @@ import cors from "cors";
 
 import healthCheckRoutes from "./routes/healthCheck.routes.js";
 import authenticationRoutes from "./routes/authentication.routes.js";
+import categoryRoutes from "./routes/category.routes.js";
 
 const app = express();
 
@@ -14,6 +15,11 @@ app.use(express.json({ limit: "16kb" }));
 
 // Health check
 app.use("/api/health", healthCheckRoutes);
+
+//Auth
 app.use("/api/auth", authenticationRoutes);
+
+//Category
+app.use("/api/category", categoryRoutes);
 
 export default app;
