@@ -28,3 +28,29 @@ export const createCategory = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getCategories = async (req, res, next) => {
+  try {
+    const categories = await Category.find({ userId: req.user.id }).sort(
+      "order",
+    );
+
+    res.json({
+      success: true,
+      data: categories,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// const userId = req.params.id;
+
+// if (!req.user) {
+//   return res.status(401).json({ status: "false", message: "Unauthorized" });
+// }
+
+// const category = await Category.find({ userId });
+
+// res.status(200).json({ category });
+//};
