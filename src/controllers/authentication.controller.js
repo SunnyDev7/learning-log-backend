@@ -107,3 +107,12 @@ export const getLoggedInUser = async (req, res, next) => {
     next(error);
   }
 };
+
+export const logOut = async (req, res, next) => {
+  //TODO: work need from frontend
+  try {
+    res.json({ success: true, message: "Logged out successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
