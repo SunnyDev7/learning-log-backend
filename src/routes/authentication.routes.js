@@ -10,9 +10,11 @@ import { authenticationMiddleware } from "../middlewares/authentication.middlewa
 
 const router = express.Router();
 
+router.use(authenticationMiddleware);
+
 router.post("/register", register);
 router.post("/login", logIn);
-router.get("/user", authenticationMiddleware, getLoggedInUser);
-router.get("/logout", authenticationMiddleware, logOut);
+router.get("/user", getLoggedInUser);
+router.get("/logout", logOut);
 
 export default router;
