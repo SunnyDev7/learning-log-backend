@@ -42,15 +42,47 @@ export const getCategories = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+
+  // const userId = req.params.id;
+
+  // if (!req.user) {
+  //   return res.status(401).json({ status: "false", message: "Unauthorized" });
+  // }
+
+  // const category = await Category.find({ userId });
+
+  // res.status(200).json({ category });
+  //};
 };
 
-// const userId = req.params.id;
+export const updateCategories = async (req, res, next) => {
+  try {
+    let category = await Category.findOne({
+      _id: req.params.id,
+      userId: req.user.id,
+    });
 
-// if (!req.user) {
-//   return res.status(401).json({ status: "false", message: "Unauthorized" });
-// }
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+    }
 
-// const category = await Category.find({ userId });
+    category = await Category.findByIdAndUpdate(
+      req.params.id,
+      {
+        ...req.body,
+        updatedAt: Date.now(),
+      },
+      { new: true, runValidators: true },
+    );
 
-// res.status(200).json({ category });
-//};
+    res.json({
+      success: true,
+      data: category,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
