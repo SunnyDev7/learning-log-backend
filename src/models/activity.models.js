@@ -27,7 +27,7 @@ const activitySchema = new mongoose.Schema({
   date: {
     type: String,
     required: true,
-    match: [/^\\d{4}-\\d{2}-\\d{2}$/, "Date must be in YYYY-MM-DD format"],
+    //match: [/^\\d{4}-\\d{2}-\\d{2}$/, "Date must be in YYYY-MM-DD format"],
   },
   details: {
     //TODO: check if this is required by client
@@ -47,4 +47,4 @@ activitySchema.index({ userId: 1, date: 1 });
 activitySchema.index({ userId: 1, date: -1 });
 activitySchema.index({ userId: 1, categoryId: 1 });
 
-export const Activity = mongoose.mode("Activity", activitySchema);
+export const Activity = mongoose.model("Activity", activitySchema);
