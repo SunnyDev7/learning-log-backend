@@ -38,3 +38,26 @@ export const createActivity = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getActivities = async (req, res, next) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    let query = { userId: req.user.id };
+
+    if (startDate && endDate) {
+      query.date = { $gte: startDate, $lte: endDate };
+    }
+
+    const activities = await Activity.find(query)
+      .populate("categoryId", "label icon color")
+      .sort("-date -timestamp");
+
+    res.json({
+      success: true,
+      data: activities,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

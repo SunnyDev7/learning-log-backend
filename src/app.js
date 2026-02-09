@@ -24,6 +24,6 @@ app.use("/api/auth", authenticationRoutes);
 app.use("/api/categories", categoryRoutes);
 
 //Activity
-app.use("/api/activies", activityRoutes);
+app.use("/api/activities", activityRoutes);
 
 export default app;
