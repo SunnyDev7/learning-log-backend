@@ -61,3 +61,35 @@ export const getActivities = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getCategoriesByDate = async (req, res, next) => {
+  try {
+    const { date } = req.params;
+
+    const activities = await Activity.find({
+      userId: req.user.id,
+      date,
+    }).populate("categoryId", "label icon color");
+
+    // Calculate totals
+    const totalTime = activities.reduce((sum, a) => sum + a.duration, 0);
+
+    const categories = {};
+    activities.forEach((a) => {
+      const catId = a.categoryId._id.toString();
+      categories[catId] = (categories[catId] || 0) + a.duration;
+    });
+
+    res.json({
+      success: true,
+      data: {
+        date,
+        activities,
+        totalTime,
+        categories,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
