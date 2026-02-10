@@ -2,6 +2,7 @@ import express from "express";
 
 import {
   createActivity,
+  deleteActivity,
   getActivities,
   getCategoriesByDate,
   updateActivity,
@@ -16,5 +17,6 @@ router.post("/create", createActivity);
 router.get("/", getActivities);
 router.post("/date/:date", getCategoriesByDate);
 router.put("/:id", updateActivity);
+router.delete("/:id", deleteActivity);
 
 export default router;

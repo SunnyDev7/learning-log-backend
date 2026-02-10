@@ -121,3 +121,28 @@ export const updateActivity = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteActivity = async (req, res, next) => {
+  try {
+    const activity = await Activity.findOne({
+      _id: req.params.id,
+      userId: req.user.id,
+    });
+
+    if (!activity) {
+      return res.status(404).json({
+        success: false,
+        message: "Activity not found",
+      });
+    }
+
+    await activity.deleteOne();
+
+    res.json({
+      success: true,
+      message: "Activity deleted",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
