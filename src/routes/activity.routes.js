@@ -4,6 +4,7 @@ import {
   createActivity,
   getActivities,
   getCategoriesByDate,
+  updateActivity,
 } from "../controllers/activity.controller.js";
 import { authenticationMiddleware } from "../middlewares/authentication.middleware.js";
 
@@ -13,6 +14,7 @@ router.use(authenticationMiddleware);
 
 router.post("/create", createActivity);
 router.get("/", getActivities);
-router.post("/:date", getCategoriesByDate);
+router.post("/date/:date", getCategoriesByDate);
+router.put("/:id", updateActivity);
 
 export default router;

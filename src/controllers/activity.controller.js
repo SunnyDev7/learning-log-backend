@@ -93,3 +93,31 @@ export const getCategoriesByDate = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateActivity = async (req, res, next) => {
+  try {
+    let activity = await Activity.findOne({
+      _id: req.params.id,
+      userId: req.user.id,
+    });
+
+    if (!activity) {
+      return res.status(404).json({
+        success: false,
+        message: "Activity not found",
+      });
+    }
+
+    activity = await Activity.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    }).populate("categoryId", "label icon color");
+
+    res.json({
+      success: true,
+      data: activity,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
