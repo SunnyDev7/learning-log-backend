@@ -67,3 +67,66 @@ export const getDashboardStats = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getWeeklyStats = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const today = getTodayDate();
+    const weekStart = getWeekStart(today);
+    const weekEnd = getWeekEnd(today);
+
+    const categories = await Category.find({ userId });
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const result = [];
+
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(weekStart);
+      d.setDate(d.getDate() + i);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      const dateStr = `${year}-${month}-${day}`;
+
+      const activities = await Activity.find({ userId, date: dateStr });
+
+      const categoryMinutes = {};
+      categories.forEach((cat) => {
+        categoryMinutes[cat._id.toString()] = 0;
+      });
+
+      activities.forEach((activity) => {
+        const catId = activity.categoryId.toString();
+        if (categoryMinutes[catId] !== undefined) {
+          categoryMinutes[catId] += activity.duration;
+        }
+      });
+
+      result.push({
+        day: days[i],
+        date: dateStr,
+        categories: categoryMinutes,
+      });
+    }
+
+    // Calculate active days //TODO: Not working
+    const activeDays = result.filter(
+      (d) => Object.values(d.categories).reduce((a, b) => a + b, 0) >= 30,
+    ).length;
+
+    res.json({
+      success: true,
+      data: {
+        days: result,
+        activeDays,
+        categories: categories.map((c) => ({
+          id: c._id,
+          label: c.label,
+          icon: c.icon,
+          color: c.color,
+        })),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
