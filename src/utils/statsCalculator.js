@@ -1,8 +1,14 @@
+import mongoose from "mongoose";
+
 import { Category } from "../models/category.models.js";
 import { Activity } from "../models/activity.models.js";
-import { getTodayDate } from "./dateUtils.js";
+import {
+  getTodayDate,
+  parseLocalDate,
+  toLocalDateString,
+} from "./dateUtils.js";
 
-// Calculate streak
+// Calculate streak TODO://Not Working
 export const calculateStreak = async (userId) => {
   // Get all activities grouped by date with total >= 30 minutes
   const dailyTotals = await Activity.aggregate([
@@ -64,5 +70,40 @@ export const calculateStreak = async (userId) => {
     currentStreak,
     longestStreak: Math.max(longestStreak, currentStreak),
     totalDaysActive: logDates.size,
+  };
+};
+
+// Calculate goal progress TODO: Not working
+export const calculateGoalProgress = async (userId) => {
+  const activities = await Activity.find({ userId }).populate("categoryId");
+
+  let udemyModulesCompleted = 0;
+  let dsaProblemsTotal = 0;
+  let germanHoursTotal = 0;
+
+  const categories = await Category.find({ userId });
+  const categoryMap = {};
+  categories.forEach((cat) => {
+    categoryMap[cat._id.toString()] = cat.label.toLowerCase();
+  });
+
+  for (const activity of activities) {
+    const categoryLabel = categoryMap[activity.categoryId.toString()] || "";
+
+    if (categoryLabel.includes("course") && activity.details?.moduleName) {
+      udemyModulesCompleted++;
+    }
+    if (categoryLabel.includes("dsa") && activity.details?.problemCount) {
+      dsaProblemsTotal += activity.details.problemCount;
+    }
+    if (categoryLabel.includes("german")) {
+      germanHoursTotal += activity.duration / 60;
+    }
+  }
+
+  return {
+    udemyModulesCompleted,
+    dsaProblemsTotal,
+    germanHoursTotal,
   };
 };
