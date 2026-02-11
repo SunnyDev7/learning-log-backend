@@ -130,3 +130,35 @@ export const getWeeklyStats = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getDailyStats = async (req, res, next) => {
+  try {
+    const { date } = req.params;
+    const userId = req.user.id;
+
+    const activities = await Activity.find({
+      userId,
+      date,
+    }).populate("categoryId", "label icon color");
+
+    const totalTime = activities.reduce((sum, a) => sum + a.duration, 0);
+
+    const categories = {};
+    activities.forEach((a) => {
+      const catId = a.categoryId._id.toString();
+      categories[catId] = (categories[catId] || 0) + a.duration;
+    });
+
+    res.json({
+      success: true,
+      data: {
+        date,
+        totalTime,
+        activities,
+        categories,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
