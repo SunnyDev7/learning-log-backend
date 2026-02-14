@@ -15,7 +15,7 @@ router.use(authenticationMiddleware);
 
 router.post("/create", createActivity);
 router.get("/", getActivities);
-router.post("/date/:date", getCategoriesByDate);
+router.get("/date/:date", getCategoriesByDate);
 router.put("/:id", updateActivity);
 router.delete("/:id", deleteActivity);
 
