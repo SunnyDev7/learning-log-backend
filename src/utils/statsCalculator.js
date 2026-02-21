@@ -19,7 +19,7 @@ export const calculateStreak = async (userId) => {
         totalMinutes: { $sum: "$duration" },
       },
     },
-    { $match: { totalMinutes: { $gte: 30 } } },
+    { $match: { totalMinutes: { $gte: 1 } } },
     { $sort: { _id: -1 } },
   ]);
 
