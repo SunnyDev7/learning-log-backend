@@ -88,7 +88,12 @@ export const calculateGoalProgress = async (userId) => {
   });
 
   for (const activity of activities) {
-    const categoryLabel = categoryMap[activity.categoryId.toString()] || "";
+    // Safety check: ensure categoryId exists and is populated
+    if (!activity.categoryId || !activity.categoryId.label) {
+      continue; // Skip if category is missing or not populated
+    }
+
+    const categoryLabel = activity.categoryId.label.toLowerCase();
 
     if (categoryLabel.includes("course") && activity.details?.moduleName) {
       udemyModulesCompleted++;
@@ -100,7 +105,7 @@ export const calculateGoalProgress = async (userId) => {
       germanHoursTotal += activity.duration / 60;
     }
   }
-
+  
   return {
     udemyModulesCompleted,
     dsaProblemsTotal,
