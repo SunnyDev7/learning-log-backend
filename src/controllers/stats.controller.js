@@ -110,7 +110,7 @@ export const getWeeklyStats = async (req, res, next) => {
 
     // Calculate active days //TODO: Not working
     const activeDays = result.filter(
-      (d) => Object.values(d.categories).reduce((a, b) => a + b, 0) >= 30,
+      (d) => Object.values(d.categories).reduce((a, b) => a + b, 0) >= 1,
     ).length;
 
     res.json({
