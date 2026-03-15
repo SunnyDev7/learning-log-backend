@@ -131,6 +131,52 @@ export const getWeeklyStats = async (req, res, next) => {
   }
 };
 
+export const getYearlyStats = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const today = getTodayDate();
+    const todayDate = new Date(today);
+
+    const months = [];
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(todayDate.getFullYear(), todayDate.getMonth() - i, 1);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const monthStart = `${year}-${month}-01`;
+      const monthEndDate = new Date(year, d.getMonth() + 1, 0);
+      const monthEnd = `${year}-${month}-${String(monthEndDate.getDate()).padStart(2, "0")}`;
+
+      months.push({
+        label: d.toLocaleString("default", { month: "short" }),
+        start: monthStart,
+        end: monthEnd,
+      });
+    }
+
+    const result = await Promise.all(
+      months.map(async (m) => {
+        const activities = await Activity.find({
+          userId,
+          date: { $gte: m.start, $lte: m.end },
+        });
+        const totalMinutes = activities.reduce((sum, a) => sum + a.duration, 0);
+        return {
+          month: m.label,
+          totalMinutes,
+          totalHours: +(totalMinutes / 60).toFixed(1),
+        };
+      }),
+    );
+
+    res.json({
+      success: true,
+      data: { months: result },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getDailyStats = async (req, res, next) => {
   try {
     const { date } = req.params;
