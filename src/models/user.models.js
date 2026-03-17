@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -22,6 +23,8 @@ const userSchema = new mongoose.Schema({
     trim: true,
     maxlength: [50, "Name cannot exceed 50 characters"],
   },
+  passwordResetToken: String,
+  passwordResetExpires: Date,
   createdAt: {
     type: Date,
     default: Date.now,
@@ -47,5 +50,15 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 userSchema.pre("save", function () {
   this.updatedAt = Date.now();
 });
+
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  this.passwordResetExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+  return resetToken;
+};
 
 export const User = mongoose.model("User", userSchema);
