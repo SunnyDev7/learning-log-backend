@@ -12,7 +12,12 @@ export const authenticationMiddleware = async (req, res, next) => {
   try {
     const tokenHeader = req.headers.authorization;
 
-    if (!tokenHeader) return next();
+    if (!tokenHeader) {
+      return res.status(401).json({
+        success: false,
+        message: "Not authorized to access this route",
+      });
+    }
 
     if (!tokenHeader.startsWith("Bearer")) {
       return res.status(400).json({ error: "Token must start with Bearer" });

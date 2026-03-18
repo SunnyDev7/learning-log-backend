@@ -13,13 +13,14 @@ import { authenticationMiddleware } from "../middlewares/authentication.middlewa
 const router = express.Router();
 
 // Public routes (no auth required)
+router.post("/register", register);
+router.post("/login", logIn);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
 
+// Protected routes
 router.use(authenticationMiddleware);
 
-router.post("/register", register);
-router.post("/login", logIn);
 router.get("/user", getLoggedInUser);
 router.get("/logout", logOut);
 
