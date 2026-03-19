@@ -31,9 +31,18 @@ export const createCategory = async (req, res, next) => {
 
 export const getCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find({ userId: req.user.id }).sort(
+    let categories = await Category.find({ userId: req.user.id }).sort(
       "order",
     );
+
+    // Seed default categories for new users
+    if (categories.length === 0) {
+      categories = await Category.insertMany([
+        { userId: req.user.id, label: "Web Development", icon: "💻", color: "hsl(210, 100%, 50%)", isDefault: true, order: 0 },
+        { userId: req.user.id, label: "Reading", icon: "📖", color: "hsl(25, 95%, 53%)", order: 1 },
+        { userId: req.user.id, label: "Workout", icon: "💪", color: "hsl(160, 70%, 40%)", order: 2 },
+      ]);
+    }
 
     res.json({
       success: true,
